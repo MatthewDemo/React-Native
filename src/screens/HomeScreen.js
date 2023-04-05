@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import HeartIcon from "../../components/HeartIcon";
 import axios from "axios";
+import ShowMoreButton from "../../components/ShowMoreButton";
 
 export default function HomeScreen({ navigation }) {
   const [characters, setCharacters] = useState([]);
@@ -51,18 +52,6 @@ export default function HomeScreen({ navigation }) {
       })
       .catch((error) => console.log(error));
   }, []);
-
-  const fetchMoreCharacters = () => {
-    if (nextUrl) {
-      axios
-        .get(nextUrl)
-        .then((response) => {
-          setCharacters([...characters, ...response.data.results]);
-          setNextUrl(response.data.next);
-        })
-        .catch((error) => console.log(error));
-    }
-  };
 
   const renderItem = ({ item }) => {
     const isFavorite = favorites.some((fav) => fav.name === item.name);
@@ -112,12 +101,12 @@ export default function HomeScreen({ navigation }) {
         renderItem={renderItem}
         keyExtractor={(item) => item.name}
       />
-      <TouchableOpacity
-        style={styles.showMoreButton}
-        onPress={fetchMoreCharacters}
-      >
-        <Text style={styles.showMoreText}>Show more</Text>
-      </TouchableOpacity>
+      <ShowMoreButton
+        nextUrl={nextUrl}
+        setNextUrl={setNextUrl}
+        characters={characters}
+        setCharacters={setCharacters}
+      />
     </View>
   );
 }
@@ -162,18 +151,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#4E4E4E",
-  },
-  showMoreButton: {
-    backgroundColor: "#4E4E4E",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 30,
-    marginBottom: 20,
-  },
-  showMoreText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
   },
 });
